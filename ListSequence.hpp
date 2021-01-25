@@ -1,5 +1,6 @@
 #pragma once
 #include "LinkedList.hpp"
+#include "Sequence.hpp"
 
 template <class T >
 class ListSequence : public Sequence<T>
@@ -50,7 +51,14 @@ public:
 			throw std::out_of_range("undefined index");
 		return this->items->Get(index);
 	}
+
+	virtual int GetIndex(const T value) const override
+	{
+		return this->items->GetIndex(value);
+	}
 public:
+
+
 	virtual void Set(int index, T value) override {
 		this->items->Set(index, value);
 	}
@@ -68,6 +76,16 @@ public:
 	{
 		this->items->InsertAt(index, value);
 		this->count++;
+	}
+	virtual bool Has(T value) {
+		int size = this->GetLength();
+		for (int i = 0; i < size; i++) { 
+			if (value == this->Get(i))
+				return false;
+			else
+				return true;
+			}
+		
 	}
 
 	virtual void Remove(T value)  override

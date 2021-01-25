@@ -91,6 +91,22 @@ public:
 			count++;
 		}
 	}
+
+	int GetIndex(T value) {
+		int index = 0;
+		T need = value;
+		Node<T>* temp = this->head;
+		while (temp != nullptr)
+		{
+			if (need == temp->data)
+			{
+				return index;
+			}
+			temp = temp->next;
+			index++;
+		}
+	}
+
 	T GetFirst()
 	{
 		return Get(0);
