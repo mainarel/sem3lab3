@@ -4,24 +4,25 @@
 #include <utility>
 using namespace std;
 
-template <class T>
+template <class ID>
 class Graph {
 public:
 	template <class ID>
 	//вершина
 	class Vertex {
 	private:
-		ID name;
+		ID id;
 	public:
-		Vertex(ID name) {
-			this->name = name;
+		Vertex(ID id) {
+			this->id = id;
 		}
 
 		ID getName() {
-			return this->name;
+			return this->id;
 		}
 	};
 		//дуга
+	template <class ID>
 		class Arc {
 		private:
 			int weight;
@@ -44,17 +45,20 @@ public:
 
 		};
 	
-public:
+
+private:
 	ListSequence<Vertex<ID>*>* vertices;
 	ListSequence<Arc<ID>*>* arcs;
+
+public:
 	Graph() {
 		this->arcs = new ListSequence<Arc<ID>*>();
 		this->vertices = new ListSequence<Vertex<ID>*>();
 		}
 
-	void addVertex(Name name) {
+	void addVertex(ID id) {
 		bool containVertex = false;
-		Vertex<Name>* toAdd = new Vertex<Name>(name);
+		Vertex<ID>* toAdd = new Vertex<ID>(id);
 
 		for (int i = 0; i < this->getVertexCount(); i++) {
 			if (this->vertexList->Get(i)->getName() == name) {
