@@ -47,6 +47,7 @@ public:
 private:
 	ListSequence<Vertex<ID>*>* vertices;
 	ListSequence<Arc<ID>*>* arcs;
+	const int INF = INT_MAX;
 
 public:
 	Graph() {
@@ -105,7 +106,8 @@ public:
 			vertices->Prepend(new_vertex);
 		}
 		else {
-			cout << "Vertex <"<<  id  <<"> is already exists" << endl;
+			throw exception("Vertex  is already exists");
+			
 		}
 	}
 
@@ -125,7 +127,7 @@ public:
 			}
 		}
 		else {
-			cout << "Arc <" << first <<", "<< second << "> is already exists" << endl;
+			throw exception("Arc  is already exists");
 		}
 	}
 
@@ -134,7 +136,8 @@ public:
 			this->arcs->RemoveAt(whereArc(first,second)); 
 		}
 		else {
-			cout << "This arc was not found in the graph" << endl;
+			throw exception("This arc was not found in the graph");
+			
 		}
 	}
 
@@ -151,7 +154,8 @@ public:
 			this->vertices->RemoveAt(this->whereVertex(id));
 		}
 		else {
-			cout << "This vertex was not found in the graph"<<endl;
+			
+			throw exception ("This vertex was not found in the graph");
 		}
 	}
 
@@ -165,7 +169,7 @@ public:
 
 		for (int i = 0; i < this->getVerticesCount(); ++i) {
 			for (int j = 0; j < this->getVerticesCount(); ++j) {
-				matrix[i][j] = 9999;
+				matrix[i][j] = INF;
 			}
 		}
 		for (int i = 0; i < this->getArcsCount(); ++i) {
@@ -262,7 +266,6 @@ public:
 		cout << "Adjacency Matrix:" << endl;
 		vector<vector<int>> vect = getAdjMatrix();
 		ListSequence<Graph<string>::Vertex<string>*>* Names = getVetex();
-
 		cout << "      ";
 		for (int i = 0; i < getVerticesCount(); i++) {
 			cout << Names->Get(i)->getID() << "    ";
@@ -271,11 +274,8 @@ public:
 		for (int i = 0; i < getVerticesCount(); i++) {
 			cout << Names->Get(i)->getID() << " | ";
 			for (int j = 0; j < getVerticesCount(); j++) {
-
 				cout.width(3);
-				//cout.setf(ios::left);
-
-				if (vect[i][j] != 9999) {
+				if (vect[i][j] != INF) {
 					cout << vect[i][j] << "  ";
 				}
 				else {

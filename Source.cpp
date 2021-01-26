@@ -8,7 +8,7 @@ int main() {
 	string ID, fID, sID;
 	int weight;
 	while (true) {
-		cout << "\n1. Add vertex\n2. Add arc\n3. Remove vertex (not work)\n4. Remove arc\n5. Print adjacency matrix\n6.Dijkstra algorithm \n7. Exit" << endl;
+		cout << "\n1. Add vertex\n2. Add arc\n3. Remove vertex (not work)\n4. Remove arc\n5. Print adjacency matrix\n6.Dijkstra algorithm \n7. Exit\n8. Example" << endl;
 		int choice; cin >> choice;
 		switch (choice) {
 		case 1: {
@@ -55,6 +55,19 @@ int main() {
 		}
 		case 7: {
 			exit(7);
+		}
+		case 8: {
+			graph->addArc("A", "B", 2);
+			graph->addArc("B", "C", 10);
+			graph->addArc("A", "D", 2);
+			graph->addArc("E", "C", 3);
+			graph->addArc("A", "F", 1);
+			graph->addArc("E", "F", 8);
+			graph->addArc("A", "C", 20);
+			graph->PrintAdjMatrix();
+			graph->dijkstra("A", "C");
+
+			break;
 		}
 		}
 	}
