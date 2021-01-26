@@ -1,8 +1,11 @@
 #pragma once
 #include "ListSequence.hpp"
+#include <iostream>
 #include <vector>
 #include <utility>
 #include <string>
+#include <queue>
+
 using namespace std;
 
 template <class ID>
@@ -62,8 +65,6 @@ public:
 		return this->vertices->GetLength();
 	}
 	bool HasVertex(ID id) {
-
-		int size = getVerticesCount();
 		for (int i = 0; i < size; i++) {
 			if (id == this->vertices->Get(i)->getID()) {
 				return true;
@@ -73,7 +74,6 @@ public:
 	}
 
 	bool HasArc(ID first, ID second) {
-		int size = getArcsCount();
 		for (int i = 0; i < this->getArcsCount(); ++i) {
 			if (this->arcs->Get(i)->getArc().first->getID() == first && this->arcs->Get(i)->getArc().second->getID() == second) {
 				return true;
@@ -101,19 +101,18 @@ public:
 	}
 
 	void addVertex(ID id) {
-		Vertex<ID>* new_vertex = new Vertex<ID>(id);
 		if (!(HasVertex(id))) {
+			Vertex<ID>* new_vertex = new Vertex<ID>(id);
 			vertices->Prepend(new_vertex);
 		}
 		else {
 			throw exception("Vertex  is already exists");
-			
 		}
 	}
 
 	void addArc(ID first, ID second, int weight) {
-		Arc<ID>* new_arc = new Arc<ID>(first, second, weight);
 		if (!(HasArc(first, second))) {
+			Arc<ID>* new_arc = new Arc<ID>(first, second, weight);
 			this->arcs->Prepend(new_arc);
 
 			Vertex<ID>* firstVertex = new Vertex<ID>(first);
@@ -190,73 +189,50 @@ public:
 		return matrix;
 	}
 
-	void dijkstra(string StartVertex, string EndVertex) {
-		int INF = 9999;
-		int startnode;
-		int endnode;
-		for (int i = 0; i < this->getVerticesCount(); i++) {
-			if (this->vertices->Get(i)->getID() == StartVertex) {
-				startnode = i;
-			}
-			if (this->vertices->Get(i)->getID() == EndVertex) {
-				endnode = i;
-			}
-		}
-		vector<vector<int>> G = this->getAdjMatrix();
-		vector<vector<int> > cost(this->getVerticesCount(), vector<int>(this->getVerticesCount(), 0));
-		vector<int> distance(this->getVerticesCount()), pred(this->getVerticesCount());
-		vector<int> visited(this->getVerticesCount());
-		int count, mindistance, nextnode, i, j;
-		for (i = 0; i < this->getVerticesCount(); i++)
-			for (j = 0; j < this->getVerticesCount(); j++)
-				if (G[i][j] == 0 || G[i][j] == INF)
-					cost[i][j] = INF;
-				else
-					cost[i][j] = G[i][j];
-		for (i = 0; i < this->getVerticesCount(); i++) {
-			distance[i] = cost[startnode][i];
-			pred[i] = startnode;
-			visited[i] = 0;
-		}
-		distance[startnode] = 0;
-		visited[startnode] = 1;
-		count = 1;
-		while (count < this->getVerticesCount() - 1) {
-			mindistance = INF;
-			for (i = 0; i < this->getVerticesCount(); i++)
-				if (distance[i] < mindistance && !visited[i]) {
-					mindistance = distance[i];
-					nextnode = i;
-				}
-			visited[nextnode] = 1;
-			for (i = 0; i < this->getVerticesCount(); i++)
-				if (!visited[i])
-					if (mindistance + cost[nextnode][i] < distance[i]) {
-						distance[i] = mindistance + cost[nextnode][i];
-						pred[i] = nextnode;
-					}
-			count++;
-		}
-		
-		for (i = 0; i < this->getVerticesCount(); i++)
-			if (i != startnode && i == endnode) {
-				string graphAPI_V;
-				if (distance[i] != INF) {
-					cout << "\nDistance to Vertex <" << this->vertices->Get(i)->getID() << "> = " << distance[i];
-					cout << "\nPath:" << this->vertices->Get(i)->getID();
-					j = i;
-					do {
-						j = pred[j];
-						cout << " <- " << this->vertices->Get(j)->getID();
-					} while (j != startnode);
-					
-				}
-				else {
-					cout << "\n\tYou can't get to Vertex " << this->vertices->Get(endnode)->getID() << " from Vertex '" <<
-						this->vertices->Get(startnode)->getID() << "'\n";
+	vector<vector<pair<ID, int>>> toAdjList() {
+		int n = getVerticesCount();
+		vector<vector<pair<ID, int>>> g(n);
+		vector<vector<int>> AdjMatrix = getAdjMatrix();
+		for (int i = 0; i < getVerticesCount(); i++) {
+			g.push_back(vector<pair<ID, int>>(n));
+			for (int j = 0; j < getVerticesCount(); j++) {
+				if (AdjMatrix[i][j] != INF) {
+					g[i].push_back(pair<ID, int>(vertices->Get(j)->getID(), AdjMatrix[i][j]));
+					cout << vertices->Get(j)->getID() << "  " << AdjMatrix[i][j];
 				}
 			}
+		}
+		return g;
 	}
+
+	//void dijkstra(int start) {
+	//	vector<vector<pair<ID, int>>> g = toAdjList();
+	//	int n = getVerticesCount();
+	//	int s = start; // стартовая вершина
+
+	//	//массивы предков и расстояний
+	//	vector<int> d(n, INF), p(n);
+	//	d[s] = 0;
+	//	priority_queue <pair<int, int>> q;
+	//	q.push(make_pair(0, s));
+	//	while (!q.empty()) {
+	//		int v = q.top().second, cur_d = -q.top().first;
+	//		q.pop();
+	//		if (cur_d > d[v])  continue;
+
+	//		for (size_t j = 0; j < g[v].size(); ++j) {
+	//			int to = g[v][j].first,
+	//				len = g[v][j].second;
+	//			if (d[v] + len < d[to]) {
+	//				d[to] = d[v] + len;
+	//				p[to] = v;
+	//				q.push(make_pair(-d[to], to));
+	//			}
+	//		}
+	//	}
+	//}
+
+
 
 	ListSequence<Vertex<ID>*>* getVetex() {
 		return this->vertices;

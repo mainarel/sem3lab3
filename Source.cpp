@@ -50,7 +50,7 @@ int main() {
 			cin >> fID;
 			cout << "Enter second vertex ID" << endl;
 			cin >> sID;
-			graph->dijkstra(fID,sID);
+			//graph->dijkstra(fID);
 			break;
 		}
 		case 7: {
@@ -65,7 +65,7 @@ int main() {
 			graph->addArc("E", "F", 8);
 			graph->addArc("A", "C", 20);
 			graph->PrintAdjMatrix();
-			graph->dijkstra("A", "C");
+			//graph->dijkstra("A");
 
 			break;
 		}
