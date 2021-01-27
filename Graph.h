@@ -7,7 +7,10 @@
 #include <queue>
 
 using namespace std;
-
+ostream& operator<< (ostream& s, pair<int, int> par) {
+	s << par.first << par.second;
+	return s;
+}
 template <class ID>
 class Graph {
 public:
@@ -64,15 +67,16 @@ public:
 	int getVerticesCount() {
 		return this->vertices->GetLength();
 	}
+
 	bool HasVertex(ID id) {
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < getVerticesCount(); i++) {
 			if (id == this->vertices->Get(i)->getID()) {
 				return true;
 			}
 		}
 		return false;
 	}
-
+	
 	bool HasArc(ID first, ID second) {
 		for (int i = 0; i < this->getArcsCount(); ++i) {
 			if (this->arcs->Get(i)->getArc().first->getID() == first && this->arcs->Get(i)->getArc().second->getID() == second) {
@@ -81,7 +85,7 @@ public:
 		}
 		return false;
 	}
-
+	
 	int whereArc(ID first, ID second) {
 		for (int i = 0; i < this->getArcsCount(); ++i) {
 			if (this->arcs->Get(i)->getArc().first->getID() == first && this->arcs->Get(i)->getArc().second->getID() == second) {
@@ -153,14 +157,13 @@ public:
 			this->vertices->RemoveAt(this->whereVertex(id));
 		}
 		else {
-			
 			throw exception ("This vertex was not found in the graph");
 		}
 	}
 
 	// Adjacency Matrix
 	vector<vector<int>> getAdjMatrix() {
-		vector<vector<int>> matrix(this->getVerticesCount(), vector<int>(this->getVerticesCount(), 0));
+	vector<vector<int>> matrix(this->getVerticesCount(), vector<int>(this->getVerticesCount(), 0));
 		//диагональ
 		for (int i = 0; i < this->getVerticesCount(); ++i) {
 			matrix[i][i] = 0;
@@ -189,48 +192,48 @@ public:
 		return matrix;
 	}
 
-	vector<vector<pair<ID, int>>> toAdjList() {
+	vector<vector<pair<int, int>>> toAdjList() {
 		int n = getVerticesCount();
-		vector<vector<pair<ID, int>>> g(n);
+		vector<vector<pair<int, int>>> g(n);
 		vector<vector<int>> AdjMatrix = getAdjMatrix();
 		for (int i = 0; i < getVerticesCount(); i++) {
-			g.push_back(vector<pair<ID, int>>(n));
+			g.push_back(vector<pair<int, int>>(n));
 			for (int j = 0; j < getVerticesCount(); j++) {
 				if (AdjMatrix[i][j] != INF) {
-					g[i].push_back(pair<ID, int>(vertices->Get(j)->getID(), AdjMatrix[i][j]));
-					cout << vertices->Get(j)->getID() << "  " << AdjMatrix[i][j];
+					g[i].push_back(pair<int, int>(AdjMatrix[i][j], vertices->Get(j)->getID()));
+					//cout << vertices->Get(j)->getID() << "  " << AdjMatrix[i][j];
 				}
 			}
+			//cout << endl;
 		}
 		return g;
 	}
 
-	//void dijkstra(int start) {
-	//	vector<vector<pair<ID, int>>> g = toAdjList();
-	//	int n = getVerticesCount();
-	//	int s = start; // стартовая вершина
+	void dijkstra(int start) {
+		int n = getVerticesCount();
+		vector <vector<pair<int, int> >> g = toAdjList();
+		int s = start;
 
-	//	//массивы предков и расстояний
-	//	vector<int> d(n, INF), p(n);
-	//	d[s] = 0;
-	//	priority_queue <pair<int, int>> q;
-	//	q.push(make_pair(0, s));
-	//	while (!q.empty()) {
-	//		int v = q.top().second, cur_d = -q.top().first;
-	//		q.pop();
-	//		if (cur_d > d[v])  continue;
+		vector<int> d(n, INF), p(n);
+			d[s] = 0;
+			priority_queue <pair<int, int>> q;
+			q.push(make_pair(0, s));
+			while (!q.empty()) {
+				int v = q.top().second, cur_d = -q.top().first;
+				q.pop();
+				if (cur_d > d[v])  continue;
 
-	//		for (size_t j = 0; j < g[v].size(); ++j) {
-	//			int to = g[v][j].first,
-	//				len = g[v][j].second;
-	//			if (d[v] + len < d[to]) {
-	//				d[to] = d[v] + len;
-	//				p[to] = v;
-	//				q.push(make_pair(-d[to], to));
-	//			}
-	//		}
-	//	}
-	//}
+				for (int j = 0; j < g[v].size(); ++j) {
+					int to = g[v-1][j].second,
+						len = g[v-1][j].first;
+					if (d[v] + len < d[to]) {
+						d[to] = d[v] + len;
+						p[to] = v;
+						q.push(make_pair(-d[to], to));
+					}
+				}
+			}
+	}
 
 
 
@@ -241,7 +244,7 @@ public:
 	void PrintAdjMatrix() {
 		cout << "Adjacency Matrix:" << endl;
 		vector<vector<int>> vect = getAdjMatrix();
-		ListSequence<Graph<string>::Vertex<string>*>* Names = getVetex();
+		ListSequence<Graph<ID>::Vertex<ID>*>* Names = getVetex();
 		cout << "      ";
 		for (int i = 0; i < getVerticesCount(); i++) {
 			cout << Names->Get(i)->getID() << "    ";
@@ -261,4 +264,5 @@ public:
 			cout << endl;
 		}
 	}
+
 };
